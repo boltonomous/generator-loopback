@@ -1,0 +1,14 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.12.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:hoek:20180212':
+    - zosconnect-node > request > hawk > hoek:
+        patched: '2018-06-19T07:25:38.478Z'
+    - zosconnect-node > request > hawk > boom > hoek:
+        patched: '2018-06-19T07:25:38.478Z'
+    - zosconnect-node > request > hawk > sntp > hoek:
+        patched: '2018-06-19T07:25:38.478Z'
+    - zosconnect-node > request > hawk > cryptiles > boom > hoek:
+        patched: '2018-06-19T07:25:38.478Z'
