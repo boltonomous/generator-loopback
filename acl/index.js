@@ -13,7 +13,7 @@ var wsModels = require('loopback-workspace').models;
 var ModelAccessControl = wsModels.ModelAccessControl;
 
 var helpers = require('../lib/helpers');
-// var helpText = require('../lib/help');
+var helpText = require('../lib/help');
 var ActionsMixin = require('../lib/actions');
 var debug = require('debug')('loopback:generator:acl');
 
@@ -21,16 +21,15 @@ module.exports = class ACLGenerator extends ActionsMixin(yeoman) {
   constructor(args, opts) {
     super(args, opts);
   }
+
   // NOTE(bajtos)
   // This generator does not track file changes via yeoman,
   // as loopback-workspace is editing (modifying) files when
   // saving project changes.
 
-  // NOTE(janny) Working on fixing the help function
-
-  // help() {
-  //   return helpText.customHelp(this, 'loopback_acl_usage.txt');
-  // }
+  help() {
+    return helpText.customHelp(this, 'loopback_acl_usage.txt');
+  }
 
   loadProject() {
     debug('loading project...');
