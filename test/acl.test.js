@@ -15,7 +15,7 @@ var common = require('./common');
 
 // Added `only` in the first commit since it updates the acl generator only
 // Will remove it in the following commit
-describe.only('loopback:acl generator', function() {
+describe('loopback:acl generator', function() {
   beforeEach(function createSandbox(done) {
     helpers.testDirectory(SANDBOX, done);
   });
