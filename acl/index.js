@@ -204,9 +204,9 @@ module.exports = class ACLGenerator extends ActionsMixin(yeoman) {
     });
   }
 
-  ACLsaveProject() {
+  saveProject() {
     debug('saving project...');
-    this.saveProject();
+    this.saveProjectForGenerator();
     debug('saved project.');
   }
 };
