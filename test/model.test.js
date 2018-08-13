@@ -17,7 +17,7 @@ var common = require('./common');
 var workspace = require('loopback-workspace');
 var Workspace = workspace.models.Workspace;
 
-describe('loopback:model generator', function() {
+describe.only('loopback:model generator', function() {
   beforeEach(common.resetWorkspace);
 
   beforeEach(function createSandbox(done) {
@@ -36,90 +36,80 @@ describe('loopback:model generator', function() {
     }, done);
   });
 
-  it('creates common/models/{name}.json', function(done) {
-    var modelGen = givenModelGenerator();
-    helpers.mockPrompt(modelGen, {
-      name: 'Product',
-      plural: 'pds',
-      dataSource: 'db',
-    });
-
-    modelGen.run(function() {
-      var content = readProductJsonSync();
-      expect(content).to.have.property('name', 'Product');
-      expect(content).to.not.have.property('public');
-      expect(content).to.have.property('plural', 'pds');
-      done();
-    });
+  it('creates common/models/{name}.json', function() {
+    return helpers.run(path.join(__dirname, '../model'))
+      .cd(SANDBOX)
+      .withPrompts({
+        name: 'Product',
+        plural: 'pds',
+        dataSource: 'db',
+      }).then(function() {
+        var content = readProductJsonSync();
+        expect(content).to.have.property('name', 'Product');
+        expect(content).to.not.have.property('public');
+        expect(content).to.have.property('plural', 'pds');
+      });
   });
 
-  it('adds an entry to server/models.json', function(done) {
-    var modelGen = givenModelGenerator();
-    helpers.mockPrompt(modelGen, {
-      name: 'Product',
-      dataSource: 'db',
-      public: false,
-      propertyName: '',
-    });
-
+  it('adds an entry to server/models.json', function() {
     var builtinModels = Object.keys(readModelsJsonSync('server'));
-    modelGen.run(function() {
-      var modelConfig = readModelsJsonSync('server');
-      var newModels = Object.keys(modelConfig);
-      var expectedModels = builtinModels.concat(['Product']);
-      expect(newModels).to.have.members(expectedModels);
-      expect(modelConfig.Product).to.eql({
+    return helpers.run(path.join(__dirname, '../model'))
+      .cd(SANDBOX)
+      .withPrompts({
+        name: 'Product',
         dataSource: 'db',
         public: false,
+        propertyName: '',
+      }).then(function() {
+        var modelConfig = readModelsJsonSync('server');
+        var newModels = Object.keys(modelConfig);
+        var expectedModels = builtinModels.concat(['Product']);
+        expect(newModels).to.have.members(expectedModels);
+        expect(modelConfig.Product).to.eql({
+          dataSource: 'db',
+          public: false,
+        });
       });
-      done();
-    });
   });
 
-  it('sets `base` option from the list', function(done) {
-    var modelGen = givenModelGenerator();
-    helpers.mockPrompt(modelGen, {
-      name: 'Product',
-      dataSource: 'db',
-      base: 'PersistedModel',
-    });
-
-    modelGen.run(function() {
-      var product = readProductJsonSync();
-      expect(product).to.have.property('base', 'PersistedModel');
-      done();
-    });
+  it('sets `base` option from the list', function() {
+    return helpers.run(path.join(__dirname, '../model'))
+      .cd(SANDBOX)
+      .withPrompts({
+        name: 'Product',
+        dataSource: 'db',
+        base: 'PersistedModel',
+      }).then(function() {
+        var product = readProductJsonSync();
+        expect(product).to.have.property('base', 'PersistedModel');
+      });
   });
 
-  it('sets `dataSource` option to db by default', function(done) {
-    var modelGen = givenModelGenerator();
-    helpers.mockPrompt(modelGen, {
-      name: 'Product',
-    });
-
-    modelGen.run(function() {
-      var product = readProductJsonSync();
-      expect(product).to.have.property('base', 'PersistedModel');
-      var modelConfig = readModelsJsonSync();
-      expect(modelConfig.Product.dataSource).to.eql('db');
-      done();
-    });
+  it('sets `dataSource` option to db by default', function() {
+    return helpers.run(path.join(__dirname, '../model'))
+      .cd(SANDBOX)
+      .withPrompts({
+        name: 'Product',
+      }).then(function() {
+        var product = readProductJsonSync();
+        expect(product).to.have.property('base', 'PersistedModel');
+        var modelConfig = readModelsJsonSync();
+        expect(modelConfig.Product.dataSource).to.eql('db');
+      });
   });
 
-  it('sets custom `base` option', function(done) {
-    var modelGen = givenModelGenerator();
-    helpers.mockPrompt(modelGen, {
-      name: 'Product',
-      dataSource: 'rest',
-      base: null,
-      customBase: 'CustomModel',
-    });
-
-    modelGen.run(function() {
-      var product = readProductJsonSync();
-      expect(product).to.have.property('base', 'CustomModel');
-      done();
-    });
+  it('sets custom `base` option', function() {
+    return helpers.run(path.join(__dirname, '../model'))
+      .cd(SANDBOX)
+      .withPrompts({
+        name: 'Product',
+        dataSource: 'rest',
+        base: null,
+        customBase: 'CustomModel',
+      }).then(function() {
+        var product = readProductJsonSync();
+        expect(product).to.have.property('base', 'CustomModel');
+      });
   });
 
   describe('in an empty project', function() {
@@ -132,69 +122,81 @@ describe('loopback:model generator', function() {
       Workspace.createFromTemplate('empty-server', 'empty', done);
     });
 
-    it('should set dataSource to null', function(done) {
-      var modelGen = givenModelGenerator();
-      helpers.mockPrompt(modelGen, {
-        name: 'Product',
-        plural: 'pds',
-      });
-
-      modelGen.run(function() {
-        var modelConfig = readModelsJsonSync();
-        expect(modelConfig.Product.dataSource).to.eql(null);
-        var product = readProductJsonSync();
-        expect(product).to.have.property('base', 'Model');
-        done();
-      });
-    });
-
-    it('should set dataSource to 1st one if db does not exist', function(done) {
-      wsModels.DataSourceDefinition.create({
-        name: 'db1',
-        connector: 'memory',
-        facetName: 'server',
-      }, function(err) {
-        if (err) return done(err);
-        var modelGen = givenModelGenerator();
-        helpers.mockPrompt(modelGen, {
-          name: 'Review',
-          plural: 'Reviews',
-        });
-
-        modelGen.run(function() {
+    it('should set dataSource to null', function() {
+      return helpers.run(path.join(__dirname, '../model'))
+        .cd(SANDBOX)
+        .withPrompts({
+          name: 'Product',
+          plural: 'pds',
+        }).then(function() {
           var modelConfig = readModelsJsonSync();
-          expect(modelConfig.Review.dataSource).to.eql('db1');
-          done();
+          expect(modelConfig.Product.dataSource).to.eql(null);
+          var product = readProductJsonSync();
+          expect(product).to.have.property('base', 'Model');
         });
-      });
     });
 
-    it('should set dataSource to db if it exists', function(done) {
-      wsModels.DataSourceDefinition.create([{
-        name: 'db1',
-        connector: 'memory',
-        facetName: 'server',
-      }, {
-        name: 'db',
-        connector: 'memory',
-        facetName: 'server',
-      }], function(err) {
-        if (err) return done(err);
-        var modelGen = givenModelGenerator();
-        helpers.mockPrompt(modelGen, {
-          name: 'Review',
-          plural: 'Reviews',
-        });
-
-        modelGen.run(function() {
-          var modelConfig = readModelsJsonSync();
-          expect(modelConfig.Review.dataSource).to.eql('db');
-          done();
+    it('should set dataSource to 1st one if db does not exist', function() {
+      return new Promise(function(resolve, reject) {
+        wsModels.DataSourceDefinition.create({
+          name: 'db1',
+          connector: 'memory',
+          facetName: 'server',
+        }, function(err) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(returnResult());
+          };
         });
       });
+
+      function returnResult() {
+        return helpers.run(path.join(__dirname, '../model'))
+          .cd(SANDBOX)
+          .withPrompts({
+            name: 'Review',
+            plural: 'Reviews',
+          }).then(function() {
+            var modelConfig = readModelsJsonSync();
+            expect(modelConfig.Review.dataSource).to.eql('db1');
+          });
+      }
     });
 
-    describe('with --bluemix', function() {
+    it('should set dataSource to db if it exists', function() {
+      return new Promise(function(resolve, reject) {
+        wsModels.DataSourceDefinition.create([{
+          name: 'db1',
+          connector: 'memory',
+          facetName: 'server',
+        }, {
+          name: 'db',
+          connector: 'memory',
+          facetName: 'server',
+        }], function(err) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(returnResult());
+          };
+        });
+      });
+
+      function returnResult() {
+        return helpers.run(path.join(__dirname, '../model'))
+          .cd(SANDBOX)
+          .withPrompts({
+            name: 'Review',
+            plural: 'Reviews',
+          }).then(function() {
+            var modelConfig = readModelsJsonSync();
+            expect(modelConfig.Review.dataSource).to.eql('db');
+          });
+      }
+    });
+
+    describe.skip('with --bluemix', function() {
       it('should not throw if no Bluemix datasources are found',
         function(done) {
           var srcPath = path.join(__dirname, 'fixtures',

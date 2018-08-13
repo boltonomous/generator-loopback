@@ -217,7 +217,6 @@ module.exports = class ModelGenerator extends ActionsMixin(yeoman) {
         name: g.f('(custom)'),
         value: null,
       }]);
-    console.log(baseModelChoices);
     var prompts;
 
     if (this.databaseModel) {
