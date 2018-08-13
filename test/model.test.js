@@ -17,7 +17,7 @@ var common = require('./common');
 var workspace = require('loopback-workspace');
 var Workspace = workspace.models.Workspace;
 
-describe.only('loopback:model generator', function() {
+describe('loopback:model generator', function() {
   beforeEach(common.resetWorkspace);
 
   beforeEach(function createSandbox(done) {
