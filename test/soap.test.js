@@ -12,7 +12,7 @@ var fs = require('fs');
 var expect = require('chai').expect;
 var common = require('./common');
 
-describe.only('loopback:soap tests', function() {
+describe('loopback:soap tests', function() {
   describe('stock quote wsdl', function() {
     beforeEach(common.resetWorkspace);
     beforeEach(function createSandbox(done) {

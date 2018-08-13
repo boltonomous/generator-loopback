@@ -20,14 +20,7 @@ var workspace = require('loopback-workspace');
 var wsModels = workspace.models;
 var debug = require('debug')('loopback:generator:soap');
 
-// A list of flags to control whether a model should be generated
-var NOT_SELECTED = 0; // It's not selected
-var CONFLICT_DETECTED = -1; // A model with the same name exists
-var SELECTED_FOR_UPDATE = 1; // Selected for update
-var SELECTED_FOR_CREATE = 2; // Selected for create
-
 module.exports = class SoapGenerator extends ActionsMixin(yeoman) {
-
   constructor(args, opts) {
     super(args, opts);
 
