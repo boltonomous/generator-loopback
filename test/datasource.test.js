@@ -188,119 +188,103 @@ describe('loopback:datasource generator', function() {
 
   if (Object.keys(cfConfig).length) {
     describe.skip('with --bluemix', function() {
-      it('should not install connector in a non-Bluemix dir', function(done) {
-        var datasourceGen = givenDataSourceGenerator('--bluemix');
-        datasourceGen.run(function() {
-          expect(datasourceGen.abort).to.eql(true);
-          done();
-        });
+      it('should not install connector in a non-Bluemix dir', function() {
+        return helpers.run(path.join(__dirname, '../datasource'))
+          .cd(SANDBOX)
+          .withPrompts()
+          .withOptions({bluemix: true})
+          .then(function() {
+            expect('should throw error').to.be.true();
+          })
+          .catch(function(err) {
+            expect(err.message).to.eql('abort');
+          });
       });
 
       // this test requires an IBM Object Storage service named "My-Object-Storage" to be provisioned already
-      it('should not try to bind a service despite error', function(done) {
-        var appGen = givenAppGenerator();
-
-        helpers.mockPrompt(appGen, {
-          appname: 'test-app',
-          template: 'api-server',
-          appMemory: '512M',
-          appInstances: 1,
-          appDomain: 'mybluemix.net',
-          appHost: 'test-app',
-          appDiskQuota: '512M',
-          enableDocker: true,
-          enableToolchain: true,
-          enableAutoScaling: true,
-          enableAppMetrics: true,
-        });
-
-        appGen.options['skip-install'] = true;
-        appGen.options['bluemix'] = true;
-        appGen.options['login'] = false;
-
-        appGen.run(function() {
-          var datasourceGen = givenDataSourceGenerator('--bluemix', '../../../datasource');
-          datasourceGen.abort = true;
-          helpers.mockPrompt(datasourceGen, {
-            serviceName: 'My-Object-Storage',
-            connector: 'loopback-component-storage',
-            installConnector: false,
+      it('should not try to bind a service despite error', function() {
+        return helpers.run(path.join(__dirname, '../app'))
+          .cd(SANDBOX)
+          .withPrompts({
+            appname: 'test-app',
+            template: 'api-server',
+            appMemory: '512M',
+            appInstances: 1,
+            appDomain: 'mybluemix.net',
+            appHost: 'test-app',
+            appDiskQuota: '512M',
+            enableDocker: true,
+            enableToolchain: true,
+            enableAutoScaling: true,
+            enableAppMetrics: true,
+          })
+          .withOptions({
+            'skip-install': true,
+            'bluemix': true,
+            'login': false,
+          })
+          .then(function() {
+            expect('should throw error').to.be.true();
+          })
+          .catch(function(err) {
+            expect(err.message).to.eql('abort');
           });
-          datasourceGen.run(function() {
-            expect(datasourceGen.serviceBindingStatus).to.equal('unbound');
-            done();
-          });
-        });
       });
 
       // this test requires an IBM Object Storage service named "My-Object-Storage" to be provisioned already
-      it('should support IBM Object Storage ', function(done) {
-        var appGen = givenAppGenerator();
-
-        helpers.mockPrompt(appGen, {
-          appname: 'test-app',
-          template: 'api-server',
-          appMemory: '512M',
-          appInstances: 1,
-          appDomain: 'mybluemix.net',
-          appHost: 'test-app',
-          appDiskQuota: '512M',
-          enableDocker: true,
-          enableToolchain: true,
-          enableAutoScaling: true,
-          enableAppMetrics: true,
-        });
-
-        appGen.options['skip-install'] = true;
-        appGen.options['bluemix'] = true;
-        appGen.options['login'] = false;
-
-        appGen.run(function() {
-          var datasourceGen = givenDataSourceGenerator('--bluemix', '../../../datasource');
-          helpers.mockPrompt(datasourceGen, {
-            serviceName: 'My-Object-Storage',
-            connector: 'loopback-component-storage',
-            installConnector: false,
+      it('should support IBM Object Storage ', function() {
+        return helpers.run(path.join(__dirname, '../app'))
+          .cd(SANDBOX)
+          .withPrompts({
+            appname: 'test-app',
+            template: 'api-server',
+            appMemory: '512M',
+            appInstances: 1,
+            appDomain: 'mybluemix.net',
+            appHost: 'test-app',
+            appDiskQuota: '512M',
+            enableDocker: true,
+            enableToolchain: true,
+            enableAutoScaling: true,
+            enableAppMetrics: true,
+          })
+          .withOptions({
+            'skip-install': true,
+            'bluemix': true,
+            'login': false,
+          })
+          .then(function() {
+            return helpers.run(path.join(__dirname, '../datasource'))
+              .withPrompts({
+                serviceName: 'My-Object-Storage',
+                connector: 'loopback-component-storage',
+                installConnector: false,
+              })
+              .withOptions({
+                bluemix: true,
+              })
+              .then(function() {
+                var datasources = Object.keys(readDataSourcesJsonSync('server'));
+                expect(datasources).to.not.include('ds-object-storage');
+                var pkg = fs.readFileSync(
+                  path.join(SANDBOX, 'test-app', 'package.json'), 'UTF-8'
+                );
+                pkg = JSON.parse(pkg);
+                // eslint-disable-next-line no-unused-expressions
+                expect(pkg.dependencies['loopback-component-storage']).to.exist;
+                var dsConf = fs.readFileSync(path.join(SANDBOX, 'test-app',
+                  '.bluemix', 'datasources-config.json'), 'UTF-8');
+                dsConf = JSON.parse(dsConf);
+                // eslint-disable-next-line no-unused-expressions
+                expect(dsConf.datasources['My-Object-Storage']).to.exist;
+                expect(dsConf.datasources['My-Object-Storage'].name)
+                  .to.equal('My-Object-Storage');
+                expect(dsConf.datasources['My-Object-Storage'].connector)
+                  .to.equal('loopback-component-storage');
+              });
           });
-
-          datasourceGen.run(function() {
-            var datasources = Object.keys(readDataSourcesJsonSync('server'));
-            expect(datasources).to.not.include('ds-object-storage');
-            var pkg = fs.readFileSync(
-              path.join(SANDBOX, 'test-app', 'package.json'), 'UTF-8'
-            );
-            pkg = JSON.parse(pkg);
-            // eslint-disable-next-line no-unused-expressions
-            expect(pkg.dependencies['loopback-component-storage']).to.exist;
-            var dsConf = fs.readFileSync(path.join(SANDBOX, 'test-app',
-              '.bluemix', 'datasources-config.json'), 'UTF-8');
-            dsConf = JSON.parse(dsConf);
-            // eslint-disable-next-line no-unused-expressions
-            expect(dsConf.datasources['My-Object-Storage']).to.exist;
-            expect(dsConf.datasources['My-Object-Storage'].name)
-              .to.equal('My-Object-Storage');
-            expect(dsConf.datasources['My-Object-Storage'].connector)
-              .to.equal('loopback-component-storage');
-            done();
-          });
-        });
       });
     });
-  }
-
-  function givenAppGenerator(args) {
-    var name = 'loopback:app';
-    var appPath = '../../app';
-    var gen = common.createGenerator(name, appPath, [], args, {});
-    gen.options['skip-install'] = true;
-    return gen;
-  }
-
-  function givenDataSourceGenerator(dsArgs, _dsPath) {
-    var dsPath = _dsPath || '../../datasource';
-    var name = 'loopback:datasource';
-    var gen = common.createGenerator(name, dsPath, [], dsArgs, {});
-    return gen;
   }
 
   function readDataSourcesJsonSync(facet) {

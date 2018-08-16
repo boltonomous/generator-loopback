@@ -19,11 +19,11 @@ var path = require('path');
 var fs = require('fs');
 var jsonfileUpdater = require('jsonfile-updater');
 var ds = require('loopback-bluemix').ds;
-var bx = require('../bluemix/helpers');
+var BluemixMixin = require('../bluemix/helpers');
 var debug = require('debug')('loopback:generator:datasource');
 var util = require('util');
 
-module.exports = class DatasourceGenerator extends ActionsMixin(yeoman) {
+module.exports = class DatasourceGenerator extends BluemixMixin(ActionsMixin(yeoman)) {
   // NOTE(bajtos)
   // This generator does not track file changes via yeoman,
   // as loopback-workspace is editing (modifying) files when
@@ -149,11 +149,11 @@ module.exports = class DatasourceGenerator extends ActionsMixin(yeoman) {
   };
 
   loginToBluemix() {
-    if (this.options.bluemix) { bx.login.apply(this); }
+    if (this.options.bluemix) { this.login.apply(this); }
   };
 
   generateBluemixFiles() {
-    bx.generateFiles();
+    this.generateFiles();
   }
 
   selectBluemixDatasource() {

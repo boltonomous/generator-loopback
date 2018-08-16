@@ -267,6 +267,89 @@ describe('loopback:app generator', function() {
       require('loopback-workspace/package.json').version);
   });
 
+  describe.skip('Bluemix integration', function() {
+    it('should create all Bluemix files', function() {
+      return helpers.run(path.join(__dirname, '../app'))
+        .cd(SANDBOX)
+        .withPrompts({
+          name: 'test-app',
+          template: 'api-server',
+          appname: 'cool-app',
+          template: 'api-server',
+          appMemory: '1024M',
+          appInstances: 5,
+          appDomain: 'my.bluemix.net',
+          appHost: 'cool-app',
+          appDiskQuota: '1280M',
+          enableDocker: true,
+          enableToolchain: true,
+          enableAutoScaling: true,
+          enableAppMetrics: true,
+        })
+        .withOptions({
+          'skip-install': true,
+          'bluemix': true,
+          'login': false,
+        })
+        .then(function() {
+          ygAssert.file(EXPECTED_PROJECT_FILES.concat(EXPECTED_BLUEMIX_FILES));
+          ygAssert.fileContent('./manifest.yml', fs.readFileSync(path.join(__dirname, 'fixtures', 'manifest.yml'), 'utf8'));
+        });
+    });
+
+    it('should omit Docker files', function() {
+      return helpers.run(path.join(__dirname, '../app'))
+        .cd(SANDBOX)
+        .withPrompts({
+          appname: 'test-app',
+          template: 'api-server',
+          appMemory: '512M',
+          appInstances: 1,
+          appDomain: 'mybluemix.net',
+          appHost: 'test-app',
+          appDiskQuota: '1024M',
+          enableDocker: false,
+          enableToolchain: true,
+          enableAutoScaling: true,
+          enableAppMetrics: true,
+        })
+        .withOptions({
+          'skip-install': true,
+          'bluemix': true,
+          'login': false,
+        })
+        .then(function() {
+          ygAssert.noFile(DOCKER_FILES);
+        });
+    });
+
+    it('should ommit Toolchain files', function() {
+      return helpers.run(path.join(__dirname, '../app'))
+        .cd(SANDBOX)
+        .withPrompts({
+          appname: 'test-app',
+          template: 'api-server',
+          appMemory: '512M',
+          appInstances: 1,
+          appDomain: 'mybluemix.net',
+          appHost: 'test-app',
+          appDiskQuota: '1024M',
+          enableDocker: false,
+          enableToolchain: false,
+          enableAutoScaling: true,
+          enableAppMetrics: true,
+        })
+        .withOptions({
+          'skip-install': true,
+          'bluemix': true,
+          'login': false,
+        })
+        .then(function() {
+          ygAssert.file('.bluemix/datasources-config.json');
+          ygAssert.noFile(TOOLCHAIN_FILES);
+        });
+    });
+  });
   function testAppNameNormalization(cwdName, expectedAppName) {
     var dir = path.join(SANDBOX, cwdName);
 
