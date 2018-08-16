@@ -14,11 +14,23 @@ var common = require('./common');
 var assert = require('assert');
 var expect = require('chai').expect;
 var fs = require('fs');
+var rimraf = require('rimraf');
+
+// Rename it to run as the last test
+// This is a workaround for it causing the bluemix, middleware, export-api-def
+// tests fail.
 
 describe('loopback:app generator', function() {
+  this.timeout(30 * 60 * 1000); // 30 minutes
   beforeEach(common.resetWorkspace);
   beforeEach(function createSandbox(done) {
     helpers.testDirectory(SANDBOX, done);
+  });
+
+  after(function(done) {
+    rimraf(SANDBOX, function(){
+      helpers.testDirectory(SANDBOX, done);
+    });
   });
 
   // This is a simple smoke test to execute all generator steps

@@ -37,19 +37,20 @@ function itSkipIf(flag) {
 }
 
 describe('loopback:bluemix generator', function() {
+  this.timeout(30 * 60 * 1000); // 30 minutes
   beforeEach(common.resetWorkspace);
-
-  beforeEach(function(done) {
-    fs.ensureDir(SANDBOX, function() {
-      process.chdir(SANDBOX);
-      common.createDummyProject(SANDBOX, 'test-app', done);
-    });
+  beforeEach(function createSandbox(done) {
+    helpers.testDirectory(SANDBOX, done);
   });
 
-  afterEach(function(done) {
-    process.chdir('/');
-    rimraf(SANDBOX, done);
+  beforeEach(function createProject(done) {
+    common.createDummyProject(SANDBOX, 'test-app', done);
   });
+
+  // afterEach(function(done) {
+  //   process.chdir('/');
+  //   rimraf(SANDBOX, done);
+  // });
 
   it('should generate datasources.bluemix.js', function() {
     return helpers.run(path.join(__dirname, '../bluemix'))
