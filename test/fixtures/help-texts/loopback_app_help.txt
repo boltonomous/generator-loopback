@@ -36,4 +36,4 @@ Example:
 
 Available generators:
 
-  loopback:app
+
