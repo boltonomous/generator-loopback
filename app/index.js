@@ -278,8 +278,13 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
     );
   }
 
-  copyFiles() {
+  writing() {
     this.directory('.', '.');
+  }
+
+  commit() {
+    var done = this.async();
+    this.fs.commit(done);
   }
 
   generateYoRc() {
@@ -294,6 +299,11 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
       this.installDeps.call(this);
     }
   }
+
+  // end() {
+  //   var done = this.async();
+  //   this.end(done);
+  // }
 
   bluemix() {
     if (this.options.bluemix) {

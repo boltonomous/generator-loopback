@@ -47,10 +47,10 @@ describe('loopback:bluemix generator', function() {
     common.createDummyProject(SANDBOX, 'test-app', done);
   });
 
-  // afterEach(function(done) {
-  //   process.chdir('/');
-  //   rimraf(SANDBOX, done);
-  // });
+  afterEach(function(done) {
+    process.chdir('/');
+    rimraf(SANDBOX, done);
+  });
 
   it('should generate datasources.bluemix.js', function() {
     return helpers.run(path.join(__dirname, '../bluemix'))

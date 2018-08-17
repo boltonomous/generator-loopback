@@ -27,11 +27,11 @@ describe('loopback:app generator', function() {
     helpers.testDirectory(SANDBOX, done);
   });
 
-  after(function(done) {
-    rimraf(SANDBOX, function(){
-      helpers.testDirectory(SANDBOX, done);
-    });
-  });
+  // after(function(done) {
+  //   rimraf(SANDBOX, function(){
+  //     helpers.testDirectory(SANDBOX, done);
+  //   });
+  // });
 
   // This is a simple smoke test to execute all generator steps
   // Since most of the heavy lifting is done by loopback-workspace,
@@ -279,7 +279,7 @@ describe('loopback:app generator', function() {
       require('loopback-workspace/package.json').version);
   });
 
-  describe.skip('Bluemix integration', function() {
+  describe('Bluemix integration', function() {
     it('should create all Bluemix files', function() {
       return helpers.run(path.join(__dirname, '../app'))
         .cd(SANDBOX)
