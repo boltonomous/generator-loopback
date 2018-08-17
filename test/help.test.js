@@ -71,6 +71,7 @@ describe('loopback generator help', function() {
 
   // Jannyhou: to be fixed!
   describe('prints right help message for each generator', function() {
+    // var CMD_NAMES = ['acl'];
     var CMD_NAMES = ['acl', 'app', 'boot-script', 'datasource',
       'export-api-def', 'middleware', 'model', 'property', 'relation',
       'remote-method', 'swagger', 'bluemix'];
@@ -83,7 +84,7 @@ describe('loopback generator help', function() {
         var helpFileName = 'loopback_' + name + '_help.txt';
         var helpFilePath = '../fixtures/help-texts/' + helpFileName;
         var output = fs.readFileSync(helpFilePath, 'utf8');
-        assert.equal(output, helpText);
+        assert.equal(helpText, output);
       });
     });
 
@@ -97,7 +98,10 @@ describe('loopback generator help', function() {
     var genClass = require(genPath);
     var gen = new genClass({
       env: yeomanEnv.createEnv(),
-      resolved: SANDBOX,
+      resolved: genPath,
+      // manually set the namespace here since in a real
+      // use case, it's set by loopback-cli
+      namespace: 'loopback:' + name,
     });
     return gen;
   }

@@ -38,14 +38,12 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
     this.option('skip-next-steps', {
       desc: g.f('Do not print "next steps" info'),
       type: Boolean,
-      default: false,
     });
 
     this.option('explorer', {
       desc: g.f('Add {{Loopback Explorer}} to the project ({{true}} ' +
         'by default)'),
       type: Boolean,
-      default: true,
     });
 
     this.option('loopbackVersion', {
@@ -61,7 +59,6 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
     this.option('bluemix', {
       desc: g.f('Set up as a Bluemix app'),
       type: Boolean,
-      default: false,
     });
 
     if (helpers.getCommandName() === 'loopback-cli') {
