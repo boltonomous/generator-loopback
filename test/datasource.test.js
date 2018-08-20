@@ -76,8 +76,8 @@ describe('loopback:datasource generator', function() {
       });
   });
 
-  // Fix it!
-  // Janny: I manually verified that by choosing "install connector",
+  // Jannyhou: To be fixed (3)!
+  // I manually verified that by choosing "install connector",
   // the custom module is intalled
   // Here it fails since folder `node_modules` is not created
   it.skip('should support custom connector', function() {
@@ -187,6 +187,7 @@ describe('loopback:datasource generator', function() {
   });
 
   if (Object.keys(cfConfig).length) {
+    // Jannyhou: To be fixed (2)!
     describe.skip('with --bluemix', function() {
       it('should not install connector in a non-Bluemix dir', function() {
         return helpers.run(path.join(__dirname, '../datasource'))
@@ -264,6 +265,7 @@ describe('loopback:datasource generator', function() {
                 bluemix: true,
               })
               .then(function() {
+                // eslint-disable-next-line max-len
                 var datasources = Object.keys(readDataSourcesJsonSync('server'));
                 expect(datasources).to.not.include('ds-object-storage');
                 var pkg = fs.readFileSync(

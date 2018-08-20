@@ -23,6 +23,7 @@ var BluemixMixin = require('../bluemix/helpers');
 var debug = require('debug')('loopback:generator:datasource');
 var util = require('util');
 
+// eslint-disable-next-line max-len
 module.exports = class DatasourceGenerator extends BluemixMixin(ActionsMixin(yeoman)) {
   // NOTE(bajtos)
   // This generator does not track file changes via yeoman,
