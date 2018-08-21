@@ -25,7 +25,7 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
   constructor(args, opts) {
     super(args, opts);
 
-    this.argument('name', {
+    this.argument(g.f('name'), {
       description: g.f('Name of the application to scaffold.'),
       required: false,
       type: String,
@@ -304,7 +304,7 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
 
   bluemix() {
     if (this.options.bluemix) {
-      this.log('\nBluemix configuration:');
+      this.log(g.f('\nBluemix configuration:'));
       this.composeWith(require.resolve('../bluemix'), this.options);
     }
   };

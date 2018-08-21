@@ -49,7 +49,7 @@ module.exports = class DatasourceGenerator extends BluemixMixin(ActionsMixin(yeo
       type: Boolean,
     });
 
-    this.argument('name', {
+    this.argument(g.f('name'), {
       description: g.f('Name of the datasource to create.'),
       required: false,
       type: String,
