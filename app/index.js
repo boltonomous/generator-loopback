@@ -17,7 +17,9 @@ var helpText = require('../lib/help');
 var validateAppName = helpers.validateAppName;
 var pkg = require('../package.json');
 var ActionsMixin = require('../lib/actions');
+var BluemixMixin = require('../bluemix/helpers');
 var debug = require('debug')('loopback:generator:app');
+var util = require('util');
 
 module.exports = class AppGenerator extends ActionsMixin(yeoman) {
   constructor(args, opts) {
@@ -300,17 +302,10 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
     }
   }
 
-  // end() {
-  //   var done = this.async();
-  //   this.end(done);
-  // }
-
   bluemix() {
     if (this.options.bluemix) {
       this.log('\nBluemix configuration:');
-      this.composeWith(require.resolve('../bluemix'), {
-        options: this.options,
-      });
+      this.composeWith(require.resolve('../bluemix'), this.options);
     }
   };
   printNextSteps() {

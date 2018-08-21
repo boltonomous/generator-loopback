@@ -51,8 +51,7 @@ describe('loopback:app generator', function() {
 
     'server/datasources.bluemix.js',
 
-    // Jannyhou: To be fixed (1)!
-    // '.cfignore',
+    '.cfignore',
     '.dockerignore',
     'Dockerfile',
     'manifest.yml',
@@ -295,8 +294,8 @@ describe('loopback:app generator', function() {
         })
         .withOptions({
           'skip-install': true,
-          'bluemix': true,
-          'login': false,
+          bluemix: true,
+          login: false,
         })
         .then(function() {
           ygAssert.file(EXPECTED_PROJECT_FILES.concat(EXPECTED_BLUEMIX_FILES));
