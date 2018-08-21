@@ -150,7 +150,7 @@ module.exports = class DatasourceGenerator extends BluemixMixin(ActionsMixin(yeo
   };
 
   loginToBluemix() {
-    if (this.options.bluemix) { this.login.apply(this); }
+    if (this.options.bluemix) { this.login(); }
   };
 
   generateBluemixFiles() {

@@ -187,18 +187,14 @@ describe('loopback:datasource generator', function() {
   });
 
   if (Object.keys(cfConfig).length) {
-    // Jannyhou: To be fixed (2)!
-    describe.skip('with --bluemix', function() {
+    describe('with --bluemix', function() {
       it('should not install connector in a non-Bluemix dir', function() {
-        return helpers.run(path.join(__dirname, '../datasource'))
-          .cd(SANDBOX)
+        var ctx = helpers.run(path.join(__dirname, '../datasource'));
+        return ctx.cd(SANDBOX)
           .withPrompts()
           .withOptions({bluemix: true})
           .then(function() {
-            expect('should throw error').to.be.true();
-          })
-          .catch(function(err) {
-            expect(err.message).to.eql('abort');
+            expect(ctx.generator.abort).to.equal(true);
           });
       });
 
@@ -225,15 +221,25 @@ describe('loopback:datasource generator', function() {
             'login': false,
           })
           .then(function() {
-            expect('should throw error').to.be.true();
-          })
-          .catch(function(err) {
-            expect(err.message).to.eql('abort');
+            var ctx = helpers.run(path.join(__dirname, '../datasource'));
+            ctx.abort = true;
+            return ctx.cd(SANDBOX)
+              .withPrompts({
+                serviceName: 'My-Object-Storage',
+                connector: 'loopback-component-storage',
+                installConnector: false,
+              })
+              .withOptions({
+                bluemix: true,
+              })
+              .then(function() {
+                expect(ctx.generator.serviceBindingStatus).to.equal('unbound');
+              });
           });
       });
-
+      // Jannyhou: To be fixed (2)!
       // this test requires an IBM Object Storage service named "My-Object-Storage" to be provisioned already
-      it('should support IBM Object Storage ', function() {
+      it.skip('should support IBM Object Storage ', function() {
         return helpers.run(path.join(__dirname, '../app'))
           .cd(SANDBOX)
           .withPrompts({
@@ -255,7 +261,9 @@ describe('loopback:datasource generator', function() {
             'login': false,
           })
           .then(function() {
+            var testDir = SANDBOX + '/test-app';
             return helpers.run(path.join(__dirname, '../datasource'))
+              .cd(testDir)
               .withPrompts({
                 serviceName: 'My-Object-Storage',
                 connector: 'loopback-component-storage',
