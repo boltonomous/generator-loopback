@@ -196,27 +196,30 @@ describe('loopback:model generator', function() {
       }
     });
 
-    describe.skip('with --bluemix', function() {
+    describe('with --bluemix', function() {
       it('should not throw if no Bluemix datasources are found',
-        function(done) {
+        function() {
           var srcPath = path.join(__dirname, 'fixtures',
             'datasources-config-empty.json');
           var destPath = path.join(SANDBOX, '.bluemix',
             'datasources-config.json');
           fs.copySync(srcPath, destPath);
 
-          var modelGen = givenModelGenerator('--bluemix --login=false');
-          helpers.mockPrompt(modelGen, {
-            name: 'Product',
-          });
-
-          modelGen.run(function() {
-            expect(modelGen.abort).to.eql(true);
-            done();
-          });
+          var ctx = helpers.run(path.join(__dirname, '../model'));
+          return ctx.cd(SANDBOX)
+            .withPrompts({
+              name: 'Product',
+            })
+            .withOptions({
+              bluemix: true,
+              login: false,
+            })
+            .then(function() {
+              expect(ctx.generator.abort).to.equal(true);
+            });
         });
 
-      it('should not throw on parsing datasources-config.json', function(done) {
+      it('should not throw on parsing datasources-config.json', function() {
         var srcPath = path.join(__dirname, 'fixtures',
           'datasources-config-empty.json');
         var destPath = path.join(SANDBOX, '.bluemix',
@@ -224,37 +227,44 @@ describe('loopback:model generator', function() {
         fs.copySync(srcPath, destPath);
         fs.writeFileSync(destPath, '');
 
-        var modelGen = givenModelGenerator('--bluemix --login=false');
-        helpers.mockPrompt(modelGen, {
-          name: 'Product',
-        });
-
-        modelGen.run(function() {
-          expect(modelGen.abort).to.eql(true);
-          done();
-        });
+        var ctx = helpers.run(path.join(__dirname, '../model'));
+        return ctx.cd(SANDBOX)
+          .withPrompts({
+            name: 'Product',
+          })
+          .withOptions({
+            bluemix: true,
+            login: false,
+          })
+          .then(function() {
+            expect(ctx.generator.abort).to.equal(true);
+          });
       });
 
-      it('should use Bluemix datasource', function(done) {
+      it('should use Bluemix datasource', function() {
         var srcPath = path.join(__dirname, 'fixtures',
           'datasources-config-filled.json');
         var destPath = path.join(SANDBOX, '.bluemix',
           'datasources-config.json');
         fs.copySync(srcPath, destPath);
 
-        var modelGen = givenModelGenerator('--bluemix --login=false');
-        helpers.mockPrompt(modelGen, {
-          name: 'Product',
-          dataSource: 'cloudant-demo-service',
-        });
-
-        modelGen.run(function() {
-          assert('cloudant-demo-service' in modelGen.bluemixDataSourcesList);
-          var modelConfig = readModelsJsonSync();
-          expect(modelConfig.Product.dataSource).to
-            .eql('cloudant-demo-service');
-          done();
-        });
+        var ctx = helpers.run(path.join(__dirname, '../model'));
+        return ctx.cd(SANDBOX)
+          .withPrompts({
+            name: 'Product',
+            dataSource: 'cloudant-demo-service',
+          })
+          .withOptions({
+            bluemix: true,
+            login: false,
+          })
+          .then(function() {
+            // eslint-disable-next-line max-len
+            assert('cloudant-demo-service' in ctx.generator.bluemixDataSourcesList);
+            var modelConfig = readModelsJsonSync();
+            expect(modelConfig.Product.dataSource).to
+              .eql('cloudant-demo-service');
+          });
       });
     });
   });
