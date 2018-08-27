@@ -54,7 +54,6 @@ describe('loopback generator help', function() {
     var gen = givenGenerator('app');
     var helpText = gen.help();
     debug('--HELP TEXT--\n', helpText);
-    // Jannyhou: to be fixed!
     assert(helpText.indexOf(' lb ') !== -1,
       '"lb" should be used');
     assert(helpText.indexOf('Available commands') !== -1,
@@ -62,16 +61,13 @@ describe('loopback generator help', function() {
 
     assert(helpText.indexOf(' slc ') === -1,
       '"slc" should not be present');
-    // Jannyhou: to be fixed!
     assert(helpText.indexOf(' yo ') === -1,
       '"yo" should not be present');
     assert(helpText.indexOf('Available generators') === -1,
       '"Available generators" should not be present');
   });
 
-  // Jannyhou: to be fixed!
   describe('prints right help message for each generator', function() {
-    // var CMD_NAMES = ['acl'];
     var CMD_NAMES = ['acl', 'app', 'boot-script', 'datasource',
       'export-api-def', 'middleware', 'model', 'property', 'relation',
       'remote-method', 'swagger', 'bluemix'];

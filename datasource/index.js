@@ -35,22 +35,22 @@ module.exports = class DatasourceGenerator extends BluemixMixin(ActionsMixin(yeo
     this.abort = false;
     this.serviceBindingStatus = 'unbound';
     this.option('bluemix', {
-      description: g.f('Add a datasource from Bluemix'),
+      desc: g.f('Add a datasource from Bluemix'),
     });
 
     this.option('login', {
-      description: g.f('Log into Bluemix'),
+      desc: g.f('Log into Bluemix'),
       type: Boolean,
       default: false,
     });
 
     this.option('sso', {
-      description: g.f('Log into Bluemix with SSO'),
+      desc: g.f('Log into Bluemix with SSO'),
       type: Boolean,
     });
 
     this.argument(g.f('name'), {
-      description: g.f('Name of the datasource to create.'),
+      desc: g.f('Name of the datasource to create.'),
       required: false,
       type: String,
     });

@@ -69,9 +69,9 @@ describe('loopback:middleware generator', function() {
           paths: ['/x', '/y'],
           params: '{"z": 1}',
         }).then(function() {
-          // eslint-disable-next-line max-len
-          var newSources = Object.keys(readMiddlewaresJsonSync('server').routes);
-          var expectedSources = builtinSources.concat(['my-middleware-3']);
+          const middlewareRoutes = readMiddlewaresJsonSync('server').routes;
+          const newSources = Object.keys(middlewareRoutes);
+          const expectedSources = builtinSources.concat(['my-middleware-3']);
           expect(newSources).to.have.members(expectedSources);
         });
     });

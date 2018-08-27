@@ -59,7 +59,7 @@ module.exports = class BluemixGenerator extends
 
   help() {
     return helpText.customHelp(this, 'loopback_bluemix_usage.txt');
-  };
+  }
 
   validateLoopBackDir() {
     var root = this.destinationRoot();
@@ -71,23 +71,23 @@ module.exports = class BluemixGenerator extends
         throw new Error('Invalid LoopBack directory');
       }
     }
-  };
+  }
 
   loginToBluemix() {
     this.login.apply(this);
-  };
+  }
 
   BMPromptServiceName() {
     this.promptServiceName();
-  };
+  }
 
   BMGetServicePlans() {
     this.getServicePlans();
-  };
+  }
 
   BMPromptServicePlan() {
     this.promptServicePlan();
-  };
+  }
 
   BMProvisionService() {
     this.provisionService();
@@ -95,23 +95,23 @@ module.exports = class BluemixGenerator extends
 
   BMConfigurePrompt() {
     this.configurePrompt();
-  };
+  }
 
   BMPromptBluemixSettings() {
     if (this.promptSettings) {
       this.promptSettings();
     };
-  };
+  }
 
   BMGenerateBluemixFiles() {
     this.generateFiles();
-  };
+  }
 
   BMPromptDefaultServices() {
     this.promptDefaultServices();
-  };
+  }
 
   BMAddDefaultServices() {
     this.addDefaultServices();
-  };
+  }
 };

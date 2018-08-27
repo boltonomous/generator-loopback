@@ -137,19 +137,11 @@ describe('loopback:model generator', function() {
     });
 
     it('should set dataSource to 1st one if db does not exist', function() {
-      return new Promise(function(resolve, reject) {
-        wsModels.DataSourceDefinition.create({
-          name: 'db1',
-          connector: 'memory',
-          facetName: 'server',
-        }, function(err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(returnResult());
-          };
-        });
-      });
+      return wsModels.DataSourceDefinition.create({
+        name: 'db1',
+        connector: 'memory',
+        facetName: 'server',
+      }).then(returnResult);
 
       function returnResult() {
         return helpers.run(path.join(__dirname, '../model'))

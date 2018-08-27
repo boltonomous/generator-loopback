@@ -206,10 +206,9 @@ module.exports = function BluemixMixin(baseClass) {
           },
         ];
 
-        var self = this;
         return this.prompt(prompts).then(function(answers) {
-          self.enableAutoScaling = answers.enableAutoScaling;
-          self.enableAppMetrics = answers.enableAppMetrics;
+          this.enableAutoScaling = answers.enableAutoScaling;
+          this.enableAppMetrics = answers.enableAppMetrics;
         }.bind(this));
       }
     };

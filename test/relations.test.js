@@ -196,7 +196,6 @@ describe('loopback:relation generator', function() {
       });
   });
 
-  // requires generator-yeoman v0.17
   it('provides default property name based on target model for belongsTo',
     function() {
       return helpers.run(path.join(__dirname, '../relation'))
@@ -212,7 +211,6 @@ describe('loopback:relation generator', function() {
         });
     });
 
-  // requires generator-yeoman v0.17
   it('provides default property name based on target model for hasMany',
     function() {
       return helpers.run(path.join(__dirname, '../relation'))

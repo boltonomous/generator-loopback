@@ -216,7 +216,8 @@ describe('loopback:app generator', function() {
 
   it('reports error if options.loopbackVersion is invalid',
     function() {
-      return helpers.run(path.join(__dirname, '../app'))
+      var ctx = helpers.run(path.join(__dirname, '../app'));
+      return ctx
         .cd(SANDBOX)
         .withPrompts({
           name: 'test-app',
@@ -224,17 +225,19 @@ describe('loopback:app generator', function() {
         })
         .withOptions({
           loopbackVersion: 'invalid-version',
-        }).on('error', function() {}).catch(function(err) {
+        }).catch(function(err) {
           expect(err.message).to.eql(
             'Invalid LoopBack version: invalid-version. ' +
             'Available versions are 2.x, 3.x.'
           );
+          ctx.generator.emit('end');
         });
     });
 
   it('reports error if options.template is invalid',
     function() {
-      return helpers.run(path.join(__dirname, '../app'))
+      var ctx = helpers.run(path.join(__dirname, '../app'));
+      return ctx
         .cd(SANDBOX)
         .withPrompts({
           name: 'test-app',
@@ -247,6 +250,7 @@ describe('loopback:app generator', function() {
             'Invalid template: invalid-template. Available templates for 3.x ' +
             'are api-server, empty-server, hello-world, notes'
           );
+          ctx.generator.emit('end');
         });
     });
 

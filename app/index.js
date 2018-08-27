@@ -26,7 +26,7 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
     super(args, opts);
 
     this.argument(g.f('name'), {
-      description: g.f('Name of the application to scaffold.'),
+      desc: g.f('Name of the application to scaffold.'),
       required: false,
       type: String,
     });
@@ -88,7 +88,7 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
 
     msgs.push(list.map(it => '  ' + it).join('\n'));
     return msgs.join('') + '\n';
-  };
+  }
 
   injectWorkspaceCopyRecursive() {
     var originalMethod = Workspace.copyRecursive;
@@ -284,6 +284,8 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
     this.directory('.', '.');
   }
 
+  // call `this.fs.commit` to finish moving the template files
+  // from memory to destination folder.
   commit() {
     var done = this.async();
     this.fs.commit(done);
@@ -309,39 +311,37 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
     }
   };
   printNextSteps() {
-    if (!this.options.initBluemix) {
-      if (this.options.skipNextSteps) return;
+    if (this.options.initBluemix || this.options.skipNextSteps) return;
 
-      var cmd = helpers.getCommandName();
-      if (!this._skipInstall) {
-        this.log();
-        this.log();
-      }
-
-      this.log(g.f('Next steps:'));
+    var cmd = helpers.getCommandName();
+    if (!this._skipInstall) {
       this.log();
-      if (this.dir && this.dir !== '.') {
-        this.log(g.f('  Change directory to your app'));
-        this.log(chalk.green('    $ cd ' + this.dir));
-        this.log();
-      }
-      if (cmd === 'apic') {
-        this.log(g.f('  Run {{API Designer}} to create, test, ' +
-          ' and publish your application'));
-        this.log(chalk.green('    $ apic edit'));
-        this.log();
-      } else {
-        this.log(g.f('  Create a model in your app'));
-        if (cmd === 'loopback-cli')
-          this.log(chalk.green('    $ lb model'));
-        else
-          this.log(chalk.green('    $ ' + cmd + ' loopback:model'));
-        this.log();
-        this.log(g.f('  Run the app'));
-        this.log(chalk.green('    $ node .'));
-        this.log();
-      }
-    };
+      this.log();
+    }
+
+    this.log(g.f('Next steps:'));
+    this.log();
+    if (this.dir && this.dir !== '.') {
+      this.log(g.f('  Change directory to your app'));
+      this.log(chalk.green('    $ cd ' + this.dir));
+      this.log();
+    }
+    if (cmd === 'apic') {
+      this.log(g.f('  Run {{API Designer}} to create, test, ' +
+        ' and publish your application'));
+      this.log(chalk.green('    $ apic edit'));
+      this.log();
+    } else {
+      this.log(g.f('  Create a model in your app'));
+      if (cmd === 'loopback-cli')
+        this.log(chalk.green('    $ lb model'));
+      else
+        this.log(chalk.green('    $ ' + cmd + ' loopback:model'));
+      this.log();
+      this.log(g.f('  Run the app'));
+      this.log(chalk.green('    $ node .'));
+      this.log();
+    }
   };
 
   promotion() {
@@ -364,7 +364,6 @@ module.exports = class AppGenerator extends ActionsMixin(yeoman) {
 
 // Export it for strong-cli to use
 module.exports._package = pkg.name + ': ' + pkg.version;
-// module.exports._yeoman = yeoman;
 module.exports._yeomanEnv = require('yeoman-environment');
 module.exports.workspaceVersion =
   require('loopback-workspace/package.json').version;

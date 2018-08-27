@@ -51,7 +51,7 @@ module.exports = class ACLGenerator extends ActionsMixin(yeoman) {
       done(err);
     }.bind(this));
     debug('loaded access type values.');
-  };
+  }
 
   loadRoleValues() {
     debug('loading role values.');

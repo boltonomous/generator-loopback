@@ -20,7 +20,7 @@ module.exports = class BootScriptGenerator extends ActionsMixin(yeoman) {
     super(args, opts);
 
     this.argument('name', {
-      description: g.f('Name of the boot script to create.'),
+      desc: g.f('Name of the boot script to create.'),
       required: false,
       optional: true,
       type: String,
